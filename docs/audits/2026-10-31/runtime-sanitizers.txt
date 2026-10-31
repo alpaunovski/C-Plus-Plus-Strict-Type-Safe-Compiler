@@ -1,0 +1,10 @@
+python3 native/verify_runtime.py
+valid: ASan/UBSan runtime check passed, exit 0
+heap_array: ASan/UBSan runtime check passed, exit 0
+type_confusion: ASan/UBSan runtime check passed, exit 86
+vector_lifetime: ASan/UBSan runtime check passed, exit 86
+replacement_allocator: ASan/UBSan runtime check passed, exit 0
+union_members: ASan/UBSan runtime check passed, exit 0
+union_lifetime: ASan/UBSan runtime check passed, exit 86
+character_alias: ASan/UBSan runtime check passed, exit 86
+strict: ASan/UBSan runtime check passed, exit 0

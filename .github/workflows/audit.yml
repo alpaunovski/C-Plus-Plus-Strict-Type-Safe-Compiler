@@ -1,0 +1,65 @@
+name: Standards and edge-case audit
+
+# The broad audit intentionally exposes unresolved failures. It is an explicit,
+# longer investigation rather than a falsely green required regression check.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: audit-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  audit:
+    name: Differential audit (macOS arm64, LLVM 21.1.8)
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.14'
+      - name: Check supported runner architecture
+        run: test "$(uname -m)" = arm64
+      - name: Restore or cache the LLVM archive
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .strictcpp/toolchains/LLVM-21.1.8-macOS-ARM64.tar.xz
+          key: llvm-archive-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('native/bootstrap.py') }}
+      - name: Verify and build the pinned toolchain
+        id: bootstrap
+        run: |
+          python3 native/bootstrap.py
+          llvm_prefix="$GITHUB_WORKSPACE/.strictcpp/toolchains/LLVM-21.1.8-macOS-ARM64"
+          echo "STRICTCPP_LLVM=$llvm_prefix" >> "$GITHUB_ENV"
+          echo "SDKROOT=$(xcrun --show-sdk-path)" >> "$GITHUB_ENV"
+          echo "$llvm_prefix/bin" >> "$GITHUB_PATH"
+      - name: Run standards, aliases and optimizer cases
+        id: main
+        run: |
+          mkdir -p build/ci
+          python3 tests/standards_matrix.py --output build/standards-matrix 2>&1 | tee build/ci/standards.log
+      - name: Run boundary and strict-interaction cases even if the main audit fails
+        if: ${{ !cancelled() && steps.bootstrap.outcome == 'success' }}
+        run: |
+          python3 tests/standards_supplement.py --output build/standards-supplement 2>&1 | tee build/ci/boundaries.log
+      - name: Retain all available audit evidence without suppressing failure status
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: standards-audit-evidence
+          path: |
+            build/ci/*.log
+            build/standards-matrix/
+            build/standards-supplement/
+          if-no-files-found: warn
+          retention-days: 7

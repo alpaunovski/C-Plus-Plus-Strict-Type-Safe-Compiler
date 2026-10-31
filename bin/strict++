@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+"""Bootstrap driver for the Strict C++ experimental compiler."""
+from pathlib import Path
+import sys
+
+# Make this checkout importable when the launcher is invoked by absolute path from
+# another directory. No package installation or modification of global Python paths is needed.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from strictcpp.driver import main
+
+# Preserve the driver/Clang exit status for shells, Make and automated test runners.
+raise SystemExit(main())

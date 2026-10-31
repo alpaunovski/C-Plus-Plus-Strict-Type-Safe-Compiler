@@ -1,0 +1,2489 @@
+{
+  "schema_version": 1,
+  "suite": "main",
+  "started_utc": "2026-10-31T11:35:42.575312+00:00",
+  "source_fingerprint": "f17341f7afb1a0b3ced11fa5671ae67df03f26e528b591e99f8c54e3d5435d5d",
+  "tools": {
+    "native": "clang version 21.1.8 (https://github.com/llvm/llvm-project 2078da43e25a4623cab2d0d60decddf709aaea28)",
+    "ast": "Apple clang version 21.0.0 (clang-2100.4.1.1)",
+    "host": "macOS-27.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "python": "3.14.5"
+  },
+  "planned": 3858,
+  "completed": 3858,
+  "seconds": 1287.407,
+  "counts": {
+    "pass": 2862,
+    "failure": 328,
+    "known_failure": 480,
+    "toolchain_unavailable": 6,
+    "policy_rejection": 182
+  },
+  "results_file": "main.results.jsonl",
+  "fixtures": [
+    {
+      "name": "scalar-address",
+      "source": "\nint main(){int n=7;return *&n!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "void-roundtrip",
+      "source": "int read(void* p){return *static_cast<int*>(p);}\nint main(){int n=7;return read(&n)!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "corresponding-unsigned-alias",
+      "source": "\nint main(){int n=7;return *reinterpret_cast<unsigned int*>(&n)!=7u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "unsigned-byte-view",
+      "source": "\nint main(){int n=1;return reinterpret_cast<unsigned char*>(&n)[0]!=1;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "signed-character-object",
+      "source": "\nint main(){signed char n=7;return *&n!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "wide-string-literal",
+      "source": "\nint main(){const wchar_t* p=L\"az\";return p[1]!=L'z';}\n",
+      "category": "character-types",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "negative-interior-index",
+      "source": "\nint main(){int a[2]={7,9};int* p=a+1;return p[-1]!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "one-past-formation",
+      "source": "\nint main(){int a[2]={7,9};int* p=a+2;return p!=&a[2];}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "private-subobject",
+      "source": "class S{int n;public:S():n(7){}int* get(){return &n;}};\nint main(){S s;return *s.get()!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "secondary-base",
+      "source": "struct A{int a;A():a(1){}};struct B{int b;B():b(7){}};struct D:A,B{};\nint main(){D d;B* p=&d;return p->b!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "scalar-new-delete",
+      "source": "\nint main(){int* p=new int(7);int n=*p;delete p;return n!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "zero-array-delete",
+      "source": "\nint main(){int* p=new int[0];delete[] p;return 0;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "destructor-access",
+      "source": "static int result=0;struct X{int n;X():n(7){}~X(){result=this->n;}};\nint main(){{X x;}return result!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "local-static",
+      "source": "int f(){static int n=7;return *&n;}\nint main(){return f()!=7||f()!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "pointer-select-call",
+      "source": "int* pick(bool b,int* x,int* y){return b?x:y;}\nint main(){int a=7,b=9;return *pick(true,&a,&b)!=7||*pick(false,&a,&b)!=9;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "aggregate-two-pointer-return",
+      "source": "struct Pair{int* a;int* b;};Pair make(int* a,int* b){Pair r={a,b};return r;}\nint main(){int a=7,b=9;Pair r=make(&a,&b);return *r.a!=7||*r.b!=9;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "overlapping-pointer-memmove",
+      "source": "#include <cstring>\nint main(){int a=7,b=9;int* p[2]={&a,&b};std::memmove(p+1,p,sizeof(int*));return *p[1]!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "unicode-identifier-path",
+      "source": "\nint main(){int τιμή=7;return *&τιμή!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "δοκιμή with spaces 🐶.cpp",
+      "armed": false
+    },
+    {
+      "name": "c-allocation",
+      "source": "#include <cstdlib>\nint main(){int* p=static_cast<int*>(std::malloc(sizeof(int)));if(!p)return 1;*p=7;int n=*p;std::free(p);return n!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "wrong-type-read",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int n=0;write(2,\"strictcpp-matrix-armed\\n\",23UL);return *reinterpret_cast<float*>(&n);}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "type-mismatch"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "wrong-type-store",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int n=0;write(2,\"strictcpp-matrix-armed\\n\",23UL);*reinterpret_cast<float*>(&n)=1;return 0;}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "type-mismatch"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "null-read",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int* p=0;write(2,\"strictcpp-matrix-armed\\n\",23UL);return *p;}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "null-access"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "misaligned-read",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int a[2]={0,0};unsigned char* p=reinterpret_cast<unsigned char*>(a);write(2,\"strictcpp-matrix-armed\\n\",23UL);return *reinterpret_cast<int*>(p+1);}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "misaligned-access"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "one-past-read",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int a[2]={7,9};int* p=a;write(2,\"strictcpp-matrix-armed\\n\",23UL);return p[2];}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "negative-outside-read",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int a[2]={7,9};int* p=a;write(2,\"strictcpp-matrix-armed\\n\",23UL);return p[-1];}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds",
+        "untracked-access",
+        "type-mismatch"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "index-scale-overflow",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int a[2]={0,0};unsigned long n=1UL<<(sizeof(unsigned long)*8-2);write(2,\"strictcpp-matrix-armed\\n\",23UL);return a[n];}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "index-overflow"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "deleted-pointer",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int* p=new int(7);delete p;write(2,\"strictcpp-matrix-armed\\n\",23UL);return *p;}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "expired-object"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "expired-stack",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int* p=0;{int n=7;p=&n;}write(2,\"strictcpp-matrix-armed\\n\",23UL);return *p;}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "expired-object"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "zero-array-read",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int* p=new int[0];write(2,\"strictcpp-matrix-armed\\n\",23UL);return *p;}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "field-array-escape",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\nstruct S{int a[2];int next;};\nint main(){S s={{1,2},9};int* p=s.a;write(2,\"strictcpp-matrix-armed\\n\",23UL);return p[2];}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "subobject-out-of-bounds",
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "write-to-const",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){const int n=7;int* p=const_cast<int*>(&n);write(2,\"strictcpp-matrix-armed\\n\",23UL);*p=9;return 0;}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "write-to-const"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "signed-char-alias",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int n=0;write(2,\"strictcpp-matrix-armed\\n\",23UL);return *reinterpret_cast<signed char*>(&n);}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "type-mismatch"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "uninitialized-int",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int n;write(2,\"strictcpp-matrix-armed\\n\",23UL);return n;}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "uninitialized-read"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "bad-function-signature",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\nint f(int){return 0;}\nint main(){int(*p)(double)=reinterpret_cast<int(*)(double)>(&f);write(2,\"strictcpp-matrix-armed\\n\",23UL);return p(1.0);}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "call-type-mismatch"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "macro-wrong-read",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n#define READ(p) (*reinterpret_cast<float*>(p))\nint main(){int n=0;write(2,\"strictcpp-matrix-armed\\n\",23UL);return READ(&n);}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "type-mismatch"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "header-wrong-read",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n#include \"read.h\"\nint main(){int n=0;write(2,\"strictcpp-matrix-armed\\n\",23UL);return read(&n);}\n",
+      "category": "safety",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "type-mismatch"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [
+        [
+          "read.h",
+          "inline int read(void* p){return *static_cast<float*>(p);}\n"
+        ]
+      ],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "nullptr",
+      "source": "\nint main(){int* p=nullptr;return p!=nullptr;}\n",
+      "category": "language",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "capturing-lambda",
+      "source": "\nint main(){int n=7;auto f=[&n](){return n;};return f()!=7;}\n",
+      "category": "language",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "range-for",
+      "source": "\nint main(){int a[3]={1,2,3};int n=0;for(int x:a)n+=x;return n!=6;}\n",
+      "category": "language",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "unique-pointer",
+      "source": "#include <memory>\nint main(){std::unique_ptr<int> p(new int(7));return *p!=7;}\n",
+      "category": "library",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "initializer-list",
+      "source": "#include <initializer_list>\nint main(){std::initializer_list<int> x={3,7};return *x.begin()!=3||x.size()!=2;}\n",
+      "category": "library",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "move-only-owner",
+      "source": "struct Owner{int* p;explicit Owner(int* q):p(q){}Owner(Owner&& x):p(x.p){x.p=nullptr;}~Owner(){delete p;}Owner(const Owner&)=delete;};\nint main(){Owner a(new int(7));Owner b(static_cast<Owner&&>(a));return *b.p!=7;}\n",
+      "category": "language",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "overaligned-stack",
+      "source": "\nint main(){alignas(64) int n=7;return *&n!=7;}\n",
+      "category": "alignment",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "utf16-string-literal",
+      "source": "\nint main(){const char16_t* p=u\"az\";return p[1]!=u'z';}\n",
+      "category": "character-types",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "utf32-string-literal",
+      "source": "\nint main(){const char32_t* p=U\"az\";return p[1]!=U'z';}\n",
+      "category": "character-types",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "generic-lambda",
+      "source": "\nint main(){auto f=[](auto n){return n+1;};return f(6)!=7;}\n",
+      "category": "language",
+      "since": 2014,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "constexpr-local-array",
+      "source": "constexpr int f(){int a[2]={3,7};return a[1];}static_assert(f()==7,\"\");\nint main(){return f()!=7;}\n",
+      "category": "constant-evaluation",
+      "since": 2014,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "variable-template",
+      "source": "template<class T>constexpr T seven=T(7);\nint main(){int n=seven<int>;return *&n!=7;}\n",
+      "category": "language",
+      "since": 2014,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "structured-binding",
+      "source": "struct Pair{int a;int b;};\nint main(){Pair p{7,9};auto [a,b]=p;return a!=7||b!=9;}\n",
+      "category": "language",
+      "since": 2017,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "guaranteed-copy-elision",
+      "source": "struct X{int n;X():n(7){}X(const X&)=delete;X(X&&)=delete;};X make(){return X{};}\nint main(){X x=make();return x.n!=7;}\n",
+      "category": "language",
+      "since": 2017,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "if-initializer",
+      "source": "\nint main(){if(int n=7;n==7)return 0;return 1;}\n",
+      "category": "language",
+      "since": 2017,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "fold-expression",
+      "source": "template<class... T>int sum(T... n){return (n+...);}\nint main(){return sum(1,2,4)!=7;}\n",
+      "category": "language",
+      "since": 2017,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "if-constexpr",
+      "source": "template<class T>int f(T n){if constexpr(sizeof(T)==sizeof(int))return int(n);else return 0;}\nint main(){return f(7)!=7;}\n",
+      "category": "language",
+      "since": 2017,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "overaligned-new",
+      "source": "struct alignas(64) X{int n=7;};\nint main(){X* p=new X;int n=p->n;delete p;return n!=7;}\n",
+      "category": "alignment",
+      "since": 2017,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "concepts-requires",
+      "source": "template<class T>concept Addable=requires(T n){n+1;};template<Addable T>T plus_one(T n){return n+1;}\nint main(){return plus_one(6)!=7;}\n",
+      "category": "language",
+      "since": 2020,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "consteval",
+      "source": "consteval int f(int n){return n+1;}static_assert(f(6)==7);\nint main(){int n=f(6);return *&n!=7;}\n",
+      "category": "constant-evaluation",
+      "since": 2020,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "constinit",
+      "source": "constinit int n=7;\nint main(){return *&n!=7;}\n",
+      "category": "language",
+      "since": 2020,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "span",
+      "source": "#include <span>\nint main(){int a[3]={3,7,9};std::span<int> s(a);return s[1]!=7||s.size()!=3;}\n",
+      "category": "library",
+      "since": 2020,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "utf8-character-type",
+      "source": "\nint main(){const char8_t* p=u8\"az\";return p[1]!=u8'z';}\n",
+      "category": "character-types",
+      "since": 2020,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "overlapping-empty-member",
+      "source": "struct E{};struct S{[[no_unique_address]] E e;int n;};\nint main(){S s{};s.n=7;return s.n!=7;}\n",
+      "category": "object-layout",
+      "since": 2020,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "if-consteval",
+      "source": "constexpr int f(int n){if consteval{return n+1;}else{return n;}}static_assert(f(6)==7);\nint main(){int n=7;return f(n)!=7;}\n",
+      "category": "constant-evaluation",
+      "since": 2023,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "explicit-object-parameter",
+      "source": "struct X{int n;int read(this const X& self){return self.n;}};\nint main(){X x{7};return x.read()!=7;}\n",
+      "category": "language",
+      "since": 2023,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "expected",
+      "source": "#include <expected>\nint main(){std::expected<int,int> x(7);return !x||*x!=7;}\n",
+      "category": "library",
+      "since": 2023,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "pack-indexing",
+      "source": "template<unsigned I,class... T>constexpr auto pick(T... values){return values...[I];}\nint main(){return pick<1>(3,7,9)!=7;}\n",
+      "category": "language",
+      "since": 2026,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "explicit-destructor-lifetime",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\nstruct X{int n;~X(){}};\nint main(){X x={7};x.~X();write(2,\"strictcpp-matrix-armed\\n\",23UL);return x.n;}\n",
+      "category": "lifetime",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "expired-object"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native",
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "character-pointer-storage-type",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){char n=0;char* p=&n;write(2,\"strictcpp-matrix-armed\\n\",23UL);signed char* q=*reinterpret_cast<signed char**>(&p);return q==0;}\n",
+      "category": "type-identity",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "type-mismatch"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "delete-corresponding-unsigned",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int* p=new int(7);unsigned int* q=reinterpret_cast<unsigned int*>(p);write(2,\"strictcpp-matrix-armed\\n\",23UL);delete q;return 0;}\n",
+      "category": "deallocation",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "delete-type-mismatch"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "uninitialized-unsigned-character",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){unsigned char n;write(2,\"strictcpp-matrix-armed\\n\",23UL);return n;}\n",
+      "category": "initialization",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "uninitialized-read"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "const-bulk-copy",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n#include <cstring>\nint main(){const int n=7;int value=9;write(2,\"strictcpp-matrix-armed\\n\",23UL);std::memcpy(const_cast<int*>(&n),&value,sizeof(n));return 0;}\n",
+      "category": "const-bulk-memory",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "write-to-const"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "copy-outside-allocation",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n#include <cstring>\nint main(){int dst[1]={0};int src[2]={1,2};write(2,\"strictcpp-matrix-armed\\n\",23UL);std::memcpy(dst,src,sizeof(src));return 0;}\n",
+      "category": "bulk-memory",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "outside-pointer-formation",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){int a[2]={7,9};write(2,\"strictcpp-matrix-armed\\n\",23UL);int* p=a+3;return p==0;}\n",
+      "category": "pointer-arithmetic",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "scalar-union-inactive",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\nunion U{int i;float f;};\nint main(){U u;u.i=0;write(2,\"strictcpp-matrix-armed\\n\",23UL);return static_cast<int>(u.f);}\n",
+      "category": "union",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "union-inactive-member"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "atomic-one-past-rmw",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){unsigned a[1]={0};unsigned* p=a+1;write(2,\"strictcpp-matrix-armed\\n\",23UL);__atomic_fetch_add(p,1u,__ATOMIC_SEQ_CST);return 0;}\n",
+      "category": "atomic-extension",
+      "since": 2011,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native",
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "common-initial-sequence",
+      "source": "struct A{int tag;double n;};struct B{int tag;float n;};union U{A a;B b;};\nint main(){U u;u.a.tag=7;u.a.n=2;return u.b.tag!=7;}\n",
+      "category": "union",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "nontrivial-array-cookie",
+      "source": "struct X{int n;X():n(7){}~X(){n=0;}};\nint main(){X* p=new X[3];int n=p[2].n;delete[] p;return n!=7;}\n",
+      "category": "deallocation",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "integer-xor-roundtrip",
+      "source": "\nint main(){int n=7;unsigned long bits=reinterpret_cast<unsigned long>(&n);unsigned long mask=0x55;bits^=mask;bits^=mask;return *reinterpret_cast<int*>(bits)!=7;}\n",
+      "category": "provenance",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "reference-member",
+      "source": "struct R{int& n;R(int& x):n(x){}int read(){return n;}};\nint main(){int n=7;R r(n);return r.read()!=7;}\n",
+      "category": "reference",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "virtual-base-subobject",
+      "source": "struct B{int n;B():n(7){}virtual ~B(){}};struct D:virtual B{};\nint main(){D d;B* b=&d;return b->n!=7;}\n",
+      "category": "object-layout",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "expired-reference-member",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\nstruct R{int& n;R(int& x):n(x){}int read(){return n;}};\nint main(){R* r=0;{int n=7;r=new R(n);}write(2,\"strictcpp-matrix-armed\\n\",23UL);return r->read();}\n",
+      "category": "reference",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "expired-object"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "thread-local-worker",
+      "source": "#include <pthread.h>\nthread_local int local=7;static int result=0;void* worker(void*){result=*&local;return 0;}\nint main(){pthread_t t;if(pthread_create(&t,0,worker,0))return 1;pthread_join(t,0);return result!=7;}\n",
+      "category": "thread-local",
+      "since": 2011,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "coroutine-suspend-resume",
+      "source": "#include <coroutine>\nstruct Task{\n struct promise_type;\n using Handle=std::coroutine_handle<promise_type>;\n Handle h;\n explicit Task(Handle value):h(value){}\n Task(Task&& other):h(other.h){other.h=nullptr;}\n ~Task(){if(h)h.destroy();}\n struct promise_type{\n  Task get_return_object(){return Task(Handle::from_promise(*this));}\n  std::suspend_always initial_suspend()noexcept{return {};}\n  std::suspend_always final_suspend()noexcept{return {};}\n  void return_void()noexcept{}\n  void unhandled_exception(){__builtin_trap();}\n };\n};\nTask run(int* out){*out=7;co_return;}\n\nint main(){int n=0;{Task task=run(&n);task.h.resume();}return n!=7;}\n",
+      "category": "coroutine",
+      "since": 2020,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native",
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-scalar",
+      "source": "\nint main(){int n=7;return *&n!=7;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-array-loop",
+      "source": "\nint main(){unsigned a[4]{};unsigned sum=0;for(unsigned i=0;i<4u;++i){a[i]=i;sum+=a[i];}return sum!=6u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-direct-call",
+      "source": "unsigned add(unsigned a,unsigned b){return a+b;}\nint main(){return add(3u,4u)!=7u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-unsigned-wrap",
+      "source": "\nint main(){unsigned n=~0u;n+=1u;return n!=0u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-branch-pointer",
+      "source": "\nint main(){unsigned a=7,b=9;bool first=true;return *(first?&a:&b)!=7u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-null",
+      "source": "int main(){return *static_cast<unsigned*>(nullptr);}",
+      "category": "strict-runtime",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "null-access"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-uninitialized",
+      "source": "int main(){unsigned n;return n;}",
+      "category": "strict-runtime",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "uninitialized-read"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-array-bounds",
+      "source": "int main(){unsigned a[2]{};return a[2];}",
+      "category": "strict-runtime",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-row-bounds",
+      "source": "int main(){unsigned a[2][3]{};return a[0][3];}",
+      "category": "strict-runtime",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "subobject-out-of-bounds"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-stored-pointer",
+      "source": "int main(){int n=7;int* p=&n;return *p;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-stored-reference",
+      "source": "int main(){int n=7;int& r=n;return r;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-record",
+      "source": "struct X{int n;};int main(){X x{7};return x.n;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-union",
+      "source": "union U{int n;float f;};int main(){U u;u.n=7;return u.n;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-character-object",
+      "source": "int main(){unsigned char n;return n;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-explicit-destruction",
+      "source": "struct X{int n;~X(){}};int main(){X x{7};x.~X();return x.n;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-pointer-type-alias",
+      "source": "int main(){char n=0;char* p=&n;signed char* q=*reinterpret_cast<signed char**>(&p);return q==nullptr;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-dynamic-divisor",
+      "source": "int main(){unsigned n=7;return 1u/n;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-signed-arithmetic",
+      "source": "int f(int n){return n+1;}int main(){return f(7);}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-const-cast",
+      "source": "int main(){const unsigned n=7;*const_cast<unsigned*>(&n)=9;return 0;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-atomic-builtin",
+      "source": "int main(){unsigned n=0;return __atomic_fetch_add(&n,1u,__ATOMIC_SEQ_CST);}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-nested-mutation",
+      "source": "int main(){unsigned n=0;return n++ + n++;}",
+      "category": "strict-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    }
+  ],
+  "dialects": {
+    "native": {
+      "c++98": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++03": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++11": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++14": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++17": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++20": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++23": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++26": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++98": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++03": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++11": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++14": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++17": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++20": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++23": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++26": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++0x": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++1y": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++1z": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2a": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2b": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2c": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2d": {
+        "accepted": false,
+        "features": {
+          "__cplusplus": null,
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": null
+        }
+      },
+      "gnu++0x": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++1y": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++1z": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2a": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2b": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2c": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2d": {
+        "accepted": false,
+        "features": {
+          "__cplusplus": null,
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": null
+        }
+      }
+    },
+    "ast": {
+      "c++98": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++03": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++11": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++14": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++17": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++20": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++23": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++26": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++98": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++03": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++11": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++14": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++17": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++20": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++23": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++26": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++0x": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++1y": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++1z": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2a": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2b": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2c": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2d": {
+        "accepted": false,
+        "features": {
+          "__cplusplus": null,
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": null
+        }
+      },
+      "gnu++0x": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++1y": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++1z": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2a": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2b": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2c": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2d": {
+        "accepted": false,
+        "features": {
+          "__cplusplus": null,
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": null
+        }
+      }
+    }
+  },
+  "omitted": [
+    "absolute artifact paths",
+    "command argument arrays",
+    "raw stdout/stderr",
+    "coverage reports",
+    "generated IR",
+    "executables",
+    "temporary directories"
+  ]
+}

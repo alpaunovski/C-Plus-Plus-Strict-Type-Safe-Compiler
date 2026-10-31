@@ -1,0 +1,1230 @@
+{
+  "schema_version": 1,
+  "suite": "supplement",
+  "started_utc": "2026-10-31T11:57:32.598873+00:00",
+  "source_fingerprint": "cfcc3d2b7e73fc03530dfccda5483432c1b78838b4db7cf0d9f16711936ec7a1",
+  "tools": {
+    "native": "clang version 21.1.8 (https://github.com/llvm/llvm-project 2078da43e25a4623cab2d0d60decddf709aaea28)",
+    "ast": "Apple clang version 21.0.0 (clang-2100.4.1.1)"
+  },
+  "planned": 528,
+  "completed": 528,
+  "seconds": 133.323,
+  "counts": {
+    "known_failure": 128,
+    "pass": 316,
+    "policy_rejection": 84
+  },
+  "results_file": "supplement.results.jsonl",
+  "fixtures": [
+    {
+      "name": "longjmp-expired-stack",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n#include <csetjmp>\nstatic std::jmp_buf environment;static int* saved;void leave(){int n=7;saved=&n;std::longjmp(environment,1);}\nint main(){if(setjmp(environment)==0)leave();write(2,\"strictcpp-matrix-armed\\n\",23UL);return *saved;}\n",
+      "category": "nonlocal-control",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "expired-object"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native",
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "variadic-scalar",
+      "source": "#include <cstdarg>\nint first(int count,...){std::va_list args;va_start(args,count);int n=va_arg(args,int);va_end(args);return n;}\nint main(){return first(1,7)!=7;}\n",
+      "category": "varargs",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "qsort-scalar-callback",
+      "source": "#include <cstdlib>\nint compare(const void* a,const void* b){int x=*static_cast<const int*>(a);int y=*static_cast<const int*>(b);return (x>y)-(x<y);}\nint main(){int values[3]={3,1,2};std::qsort(values,3,sizeof(int),compare);return values[0]!=1||values[2]!=3;}\n",
+      "category": "foreign-callback",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native",
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "qsort-pointer-callback",
+      "source": "#include <cstdlib>\nint compare(const void* a,const void* b){int x=**static_cast<int* const*>(a);int y=**static_cast<int* const*>(b);return (x>y)-(x<y);}\nint main(){int a=3,b=1,c=2;int* values[3]={&a,&b,&c};std::qsort(values,3,sizeof(int*),compare);return *values[0]!=1||*values[2]!=3;}\n",
+      "category": "foreign-shadow-copy",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native",
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "assembly-const-store",
+      "source": "extern \"C\" long write(int,const void*,unsigned long);\n\nint main(){const int n=7;int value=9;write(2,\"strictcpp-matrix-armed\\n\",23UL);asm volatile(\"str %w1, [%0]\"::\"r\"(&n),\"r\"(value):\"memory\");return 0;}\n",
+      "category": "assembly-extension",
+      "since": 1998,
+      "expectation": "violation",
+      "diagnostics": [
+        "write-to-const"
+      ],
+      "profiles": [
+        "native",
+        "ast"
+      ],
+      "known": [
+        "native",
+        "ast"
+      ],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": true
+    },
+    {
+      "name": "strict-bool-roundtrip",
+      "source": "\nint main(){bool n=true;return *&n!=true;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-all-integer-widths",
+      "source": "\nint main(){long a=7;long long b=7;unsigned long c=7;unsigned long long d=7;return *&a!=7||*&b!=7||*&c!=7u||*&d!=7u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-partial-initializer",
+      "source": "\nint main(){unsigned a[3]={7};return a[0]!=7u||a[1]!=0u||a[2]!=0u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-unevaluated-uninitialized",
+      "source": "\nint main(){unsigned n;return sizeof(n)!=4u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-short-circuit-uninitialized",
+      "source": "\nint main(){bool n;bool take=false;return take&&n;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-static-zero",
+      "source": "static unsigned n;unsigned read(){return *&n;}\nint main(){return read()!=0u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-array-alias",
+      "source": "typedef unsigned Values[2];\nint main(){Values a={3,7};return a[1]!=7u;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-scalar-one-past",
+      "source": "\nint main(){unsigned n=7;return (&n+1u)==&n;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-defined-division-shift",
+      "source": "\nint main(){unsigned n=16u;n/=2u;n<<=1u;long value=-7;return n!=16u||value/2!=-3;}\n",
+      "category": "core",
+      "since": 1998,
+      "expectation": "valid",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-bool-uninitialized",
+      "source": "int main(){bool n;return n;}",
+      "category": "strict-interaction",
+      "since": 2017,
+      "expectation": "violation",
+      "diagnostics": [
+        "uninitialized-read"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-long-long-uninitialized",
+      "source": "int main(){long long n;return n!=0;}",
+      "category": "strict-interaction",
+      "since": 2017,
+      "expectation": "violation",
+      "diagnostics": [
+        "uninitialized-read"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-partially-written-array",
+      "source": "int main(){unsigned a[2];a[0]=7u;return a[1];}",
+      "category": "strict-interaction",
+      "since": 2017,
+      "expectation": "violation",
+      "diagnostics": [
+        "uninitialized-read"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-negative-array-index",
+      "source": "int main(){unsigned a[2]{};return a[-1];}",
+      "category": "strict-interaction",
+      "since": 2017,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-pointer-offset-overflow",
+      "source": "int main(){unsigned a[2]{};unsigned long n=1ul<<62;return a[n];}",
+      "category": "strict-interaction",
+      "since": 2017,
+      "expectation": "violation",
+      "diagnostics": [
+        "index-overflow"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-outside-pointer-formation",
+      "source": "int main(){unsigned a[2]{};return (a+3u)==nullptr;}",
+      "category": "strict-interaction",
+      "since": 2017,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-scalar-one-past-read",
+      "source": "int main(){unsigned n=7;return *(&n+1u);}",
+      "category": "strict-interaction",
+      "since": 2017,
+      "expectation": "violation",
+      "diagnostics": [
+        "out-of-bounds"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-conditional-null-read",
+      "source": "int main(){unsigned n=7;bool take=false;return *(take?&n:static_cast<unsigned*>(nullptr));}",
+      "category": "strict-interaction",
+      "since": 2017,
+      "expectation": "violation",
+      "diagnostics": [
+        "null-access"
+      ],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-negative-divisor",
+      "source": "int main(){int n=-7;return n/-1;}",
+      "category": "strict-interaction-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-shift-type-width",
+      "source": "int main(){unsigned n=1;return n<<32u;}",
+      "category": "strict-interaction-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-volatile-object",
+      "source": "int main(){volatile unsigned n=7;return n;}",
+      "category": "strict-interaction-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-variadic-interface",
+      "source": "unsigned f(unsigned n,...){return n;}int main(){return f(0u,7u);}",
+      "category": "strict-interaction-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-assembly-boundary",
+      "source": "int main(){asm volatile(\"\");return 0;}",
+      "category": "strict-interaction-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-signed-overflow-constant",
+      "source": "int main(){int n=2147483647;return n+1;}",
+      "category": "strict-interaction-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    },
+    {
+      "name": "strict-reject-pointer-difference",
+      "source": "int main(){unsigned a[2]{};return &a[1]-&a[0];}",
+      "category": "strict-interaction-admission",
+      "since": 2017,
+      "expectation": "policy",
+      "diagnostics": [],
+      "profiles": [
+        "strict"
+      ],
+      "known": [],
+      "files": [],
+      "filename": "main.cpp",
+      "armed": false
+    }
+  ],
+  "dialects": {
+    "native": {
+      "c++98": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++03": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++11": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++14": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++17": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++20": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++23": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++26": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++98": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++03": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++11": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++14": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++17": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++20": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++23": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++26": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++0x": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++1y": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++1z": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2a": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2b": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2c": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2d": {
+        "accepted": false,
+        "features": {
+          "__cplusplus": null,
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": null
+        }
+      },
+      "gnu++0x": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++1y": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++1z": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2a": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2b": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2c": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2d": {
+        "accepted": false,
+        "features": {
+          "__cplusplus": null,
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": null
+        }
+      }
+    },
+    "ast": {
+      "c++98": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++03": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++11": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++14": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++17": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++20": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++23": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++26": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++98": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++03": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "199711L",
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++11": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++14": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++17": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++20": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++23": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++26": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++0x": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++1y": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++1z": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2a": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2b": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2c": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "c++2d": {
+        "accepted": false,
+        "features": {
+          "__cplusplus": null,
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": null
+        }
+      },
+      "gnu++0x": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201103L",
+          "__cpp_constexpr": "200704",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++1y": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201402L",
+          "__cpp_constexpr": "201304L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++1z": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "201703L",
+          "__cpp_constexpr": "201603L",
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2a": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202002L",
+          "__cpp_constexpr": "202002L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2b": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202302L",
+          "__cpp_constexpr": "202211L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2c": {
+        "accepted": true,
+        "features": {
+          "__cplusplus": "202400L",
+          "__cpp_constexpr": "202406L",
+          "__cpp_concepts": "202002",
+          "__cpp_consteval": "202211L",
+          "__cpp_if_consteval": "202106L",
+          "__cpp_explicit_this_parameter": "202110L",
+          "__cpp_pack_indexing": "202311L"
+        }
+      },
+      "gnu++2d": {
+        "accepted": false,
+        "features": {
+          "__cplusplus": null,
+          "__cpp_constexpr": null,
+          "__cpp_concepts": null,
+          "__cpp_consteval": null,
+          "__cpp_if_consteval": null,
+          "__cpp_explicit_this_parameter": null,
+          "__cpp_pack_indexing": null
+        }
+      }
+    }
+  },
+  "omitted": [
+    "absolute artifact paths",
+    "command argument arrays",
+    "raw stdout/stderr",
+    "coverage reports",
+    "generated IR",
+    "executables",
+    "temporary directories"
+  ]
+}
